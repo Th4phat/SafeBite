@@ -1,0 +1,13 @@
+<resources>
+  <string name="app_name">ticta2025</string>
+  <string name="expo_system_ui_user_interface_style" translatable="false">automatic</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="welcome">Welcome!</string>
+  <string name="common">Common</string>
+  <string name="explore">Explore</string>
+  <string name="home">Home</string>
+  <string name="analysis">Analysis</string>
+  <string name="camera">Camera</string>
+  <string name="history">History</string>
+</resources>

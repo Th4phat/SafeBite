@@ -1,0 +1,9 @@
+<resources>
+  <string name="welcome">"Welcome!"</string>
+  <string name="common">Common</string>
+  <string name="explore">Explore</string>
+  <string name="home">Home</string>
+  <string name="analysis">Analysis</string>
+  <string name="camera">Camera</string>
+  <string name="history">History</string>
+</resources>
