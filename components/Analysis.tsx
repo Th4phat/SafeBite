@@ -1,5 +1,6 @@
 // src/components/AnalysisResultScreen.tsx
 
+import { AnalysisResponse } from "@/constants/Struct";
 import i18n from "@/languages/i18n";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,7 +14,6 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { AnalysisResponse } from "../api/mockApi";
 import { FoodItemCard } from "../components/FoodItemCard";
 
 // Props for the main AnalysisResultScreen component

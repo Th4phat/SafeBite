@@ -2,11 +2,11 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react'; // Import useEffect and useState
+import React, { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import i18n, { initI18n } from '@/languages/i18n'; // Import i18n and initI18n
+import i18n, { initI18n } from '@/languages/i18n';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -19,9 +19,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     const initializeAndListen = async () => {
-      await initI18n(); // Initialize i18n
+      await initI18n();
       setIsI18nInitialized(true);
-      setCurrentLocale(i18n.locale); // Set initial locale
+      setCurrentLocale(i18n.locale);
 
       // Listen for locale changes
       i18n.onChange(() => {
@@ -32,7 +32,7 @@ export default function RootLayout() {
     initializeAndListen();
   }, []);
 
-  if (!loaded || !isI18nInitialized) { // Wait for both fonts and i18n to load
+  if (!loaded || !isI18nInitialized) {
     return null;
   }
 

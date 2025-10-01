@@ -1,6 +1,6 @@
 import { ai } from "@/api/genAi";
-import { AnalysisResponse, FoodItem } from "@/api/mockApi"; // Keep AnalysisResponse and FoodItem
 import AnalysisResultScreen from "@/components/Analysis";
+import { AnalysisResponse, FoodItem } from "@/constants/Struct";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Type } from "@google/genai"; // Import Schema for schema definition
 import { useFocusEffect } from "@react-navigation/native";
@@ -17,7 +17,6 @@ import {
 } from "react-native";
 import { PhotoAnalysisResult, saveAnalysisResult } from '../../api/historyStorage';
 
-// You'll need to install: expo install expo-linear-gradient
 import i18n from "@/languages/i18n";
 import { Buffer } from 'buffer/';
 import { LinearGradient } from "expo-linear-gradient";
@@ -31,18 +30,14 @@ const MenuScannerScreen: FC = () => {
   const [analysisResult, setAnalysisResult] =
     useState<AnalysisResponse | null>(null);
   const cameraRef = useRef<CameraView>(null);
-  const [cameraKey, setCameraKey] = useState(0); // New state for forcing CameraView re-mount
-  const [isCameraActive, setIsCameraActive] = useState(false); // New state to track camera readiness
+  const [cameraKey, setCameraKey] = useState(0);
+  const [isCameraActive, setIsCameraActive] = useState(false);
   const [isFocused, setIsFocused] = useState(true);
-  // Animation values
   const scanLineAnimation = useRef(new Animated.Value(0)).current;
   const pulseAnimation = useRef(new Animated.Value(1)).current;
   const fadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Fade in animation (initial component mount or status change)
-    // This useEffect now only handles the fadeAnimation if it's tied to status changes or initial mount.
-    // The fadeAnimation is also reset and started in useFocusEffect for re-entry.
     Animated.timing(fadeAnimation, {
       toValue: 1,
       duration: 800,
@@ -58,12 +53,10 @@ const MenuScannerScreen: FC = () => {
       setCameraKey((prevKey) => prevKey + 1);
       setIsCameraActive(false);
 
-      // Reset animations
       scanLineAnimation.setValue(0);
       pulseAnimation.setValue(1);
-      fadeAnimation.setValue(0); // Reset fade for re-entry
+      fadeAnimation.setValue(0);
 
-      // Start scan line animation
       const scanAnimation = Animated.loop(
         Animated.sequence([
           Animated.timing(scanLineAnimation, {
@@ -78,9 +71,8 @@ const MenuScannerScreen: FC = () => {
           }),
         ])
       );
-      scanAnimation.start(); // Start the scan animation
+      scanAnimation.start();
 
-      // Start pulse animation
       const pulseAnimationLoop = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnimation, {
@@ -95,9 +87,8 @@ const MenuScannerScreen: FC = () => {
           }),
         ])
       );
-      pulseAnimationLoop.start(); // Start the pulse animation
+      pulseAnimationLoop.start();
 
-      // Start fade in animation for when screen comes into focus
       Animated.timing(fadeAnimation, {
         toValue: 1,
         duration: 800,
@@ -106,9 +97,8 @@ const MenuScannerScreen: FC = () => {
 
       return () => {
         setIsFocused(false);
-        scanAnimation.stop(); // Stop scan animation on blur
-        pulseAnimationLoop.stop(); // Stop pulse animation on blur
-        // Optionally, reset values here if needed for next focus
+        scanAnimation.stop();
+        pulseAnimationLoop.stop();
         scanLineAnimation.setValue(0);
         pulseAnimation.setValue(1);
         fadeAnimation.setValue(0);
@@ -161,7 +151,6 @@ const MenuScannerScreen: FC = () => {
         }
         console.log("Photo URI:", photo.uri);
 
-        // Convert image to base64
         const base64Photo = await fetch(photo.uri).then((response) =>
           response.arrayBuffer()
         ).then((buffer) => Buffer.from(buffer).toString("base64"));
@@ -210,10 +199,9 @@ const MenuScannerScreen: FC = () => {
 
         const parsedResult: FoodItem[] = JSON.parse(result.text || "[]");
 
-        // Transform the parsed result to AnalysisResponse
         const transformedResult: AnalysisResponse = {
           foods: parsedResult.map((item, index) => ({
-            id: `${Date.now()}-${index}`, // Ensure unique ID for each item
+            id: `${Date.now()}-${index}`,
             name: item.name,
             allergens: item.allergens,
             ingredients: item.ingredients,
@@ -223,9 +211,9 @@ const MenuScannerScreen: FC = () => {
         setAnalysisResult(transformedResult);
 
         const newHistoryEntry: PhotoAnalysisResult = {
-          id: Date.now().toString(), // Unique ID
+          id: Date.now().toString(),
           timestamp: Date.now(),
-          imageUrl: photo.uri, // The URL of the taken photo
+          imageUrl: photo.uri,
           analysisData: transformedResult,
         };
         await saveAnalysisResult(newHistoryEntry);
@@ -285,7 +273,7 @@ const MenuScannerScreen: FC = () => {
             <View style={[styles.corner, styles.topRight]} />
             <View style={[styles.corner, styles.bottomLeft]} />
             <View style={[styles.corner, styles.bottomRight]} />
-            
+
             {/* Animated Scan Line */}
             <Animated.View
               style={[
@@ -295,7 +283,7 @@ const MenuScannerScreen: FC = () => {
                 },
               ]}
             />
-            
+
             {/* Center Target */}
             <View style={styles.centerTarget}>
               <View style={styles.targetRing} />
@@ -403,7 +391,6 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     height: height * 0.6,
     position: "relative",
-    // borderRadius: 20,
     overflow: "hidden",
   },
   corner: {
@@ -580,7 +567,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   permissionButton: {
-    // width: "100%",
     padding: 2,
     borderRadius: 15,
     overflow: "hidden",

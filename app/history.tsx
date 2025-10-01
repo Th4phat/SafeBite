@@ -1,3 +1,4 @@
+import { FoodItem } from '@/constants/Struct';
 import i18n from '@/languages/i18n';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
@@ -12,10 +13,8 @@ import {
   View
 } from 'react-native';
 import { deleteAnalysisResult, getAnalysisHistory, PhotoAnalysisResult } from '../api/historyStorage';
-import { FoodItem } from '../api/mockApi';
 import { FoodItemCard } from '../components/FoodItemCard';
 
-// Enable LayoutAnimation for Android
 
 interface HistoryItemProps {
   item: PhotoAnalysisResult;
@@ -73,7 +72,7 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item, isExpanded, onToggle, o
           />
         </View>
       </TouchableOpacity>
-      
+
       {isExpanded && (
         <View style={styles.expandedContent}>
           {item.analysisData.foods.length > 0 ? (
@@ -238,7 +237,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFEBEE', // Light red background
+    backgroundColor: '#FFEBEE',
     borderRadius: 8,
     paddingVertical: 10,
     marginTop: 20,

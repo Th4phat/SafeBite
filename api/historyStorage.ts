@@ -1,13 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AnalysisResponse } from './mockApi'; // Import AnalysisResponse
 
 const HISTORY_KEY = 'history';
 
+export interface FoodItem {
+  id: string;
+  name: string;
+  ingredients: string[];
+  allergens: string[];
+}
+
+export interface AnalysisResponse {
+  foods: FoodItem[];
+}
 export interface PhotoAnalysisResult {
   id: string;
   timestamp: number;
   imageUrl: string;
-  analysisData: AnalysisResponse; // Changed to AnalysisResponse
+  analysisData: AnalysisResponse;
 }
 
 export async function saveAnalysisResult(result: PhotoAnalysisResult): Promise<void> {

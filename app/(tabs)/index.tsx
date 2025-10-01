@@ -1,4 +1,3 @@
-// src/components/HomeScreen.tsx
 
 import i18n from "@/languages/i18n";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -26,7 +25,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
   const fadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Bounce animation for the main icon
     Animated.loop(
       Animated.sequence([
         Animated.timing(bounceAnimation, {
@@ -42,7 +40,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
       ])
     ).start();
 
-    // Fade in animation
     Animated.timing(fadeAnimation, {
       toValue: 1,
       duration: 1000,
@@ -158,7 +155,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header Section */}
         <Animated.View
           style={[styles.header, { opacity: fadeAnimation }]}
         >
@@ -181,7 +177,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
           </Text>
         </Animated.View>
 
-        {/* History Button */}
         <Link href="/history" asChild>
           <TouchableOpacity style={styles.historyButton}>
             <Text style={styles.historyButtonText}>
@@ -190,7 +185,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
           </TouchableOpacity>
         </Link>
 
-        {/* Features Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{i18n.t('home.whyChooseTitle')}</Text>
           <View style={styles.featuresGrid}>
@@ -225,7 +219,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
           </View>
         </View>
 
-        {/* How to Use Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{i18n.t('home.howToUseTitle')}</Text>
           <View style={styles.stepsContainer}>
@@ -264,7 +257,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
           </View>
         </View>
 
-        {/* Safety Notice */}
         <View style={styles.safetyNotice}>
           <View style={styles.safetyIcon}>
             <Ionicons name="medical" size={24} color="#e74c3c" />
@@ -278,7 +270,6 @@ const HomeScreen: FC<HomeScreenProps> = ({ onGetStarted }) => {
 
 
 
-        {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             {i18n.t('home.footerText')}

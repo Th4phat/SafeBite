@@ -1,4 +1,3 @@
-// src/screens/AllergyProfileScreen.tsx
 
 import i18n, { LANGUAGE_STORAGE_KEY } from "@/languages/i18n";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,12 +19,9 @@ import {
   Vibration,
   View,
 } from "react-native";
-// Removed LinearGradient import
-// Removed BlurView import
 
 const { width } = Dimensions.get("window");
 
-// --- Type Definitions ---
 export interface AllergenItem {
   id: string;
   name: string;
@@ -55,29 +51,27 @@ export interface AllergyProfile {
   autoScanEnabled: boolean;
 }
 
-// --- App Color Palette (from index.tsx) ---
 const AppColors = {
-  primary: "#667eea", // Main blue
-  danger: "#ff6b6b", // Red for alerts/danger
-  success: "#4ecdc4", // Teal for success
-  warning: "#ffe66d", // Yellow for warning
-  purple: "#9b59b6", // Purple
-  orange: "#f39c12", // Orange
-  green: "#27ae60", // Green
-  error: "#e74c3c", // Error red
-  background: "#f8f9fa", // Light background
-  textPrimary: "#2c3e50", // Dark text
-  textSecondary: "#666", // Medium gray text
-  textLight: "#999", // Light gray text
-  cardBackground: "white", // White for cards
-  shadow: "#000", // Black for shadows
-  borderColor: "#e0e0e0", // Light gray for borders
-  paleSuccess: "rgba(78, 205, 196, 0.2)", // Transparent version of success
-  paleWarning: "rgba(255, 230, 109, 0.2)", // Transparent version of warning
-  paleDanger: "rgba(255, 107, 107, 0.2)", // Transparent version of danger
+  primary: "#667eea",
+  danger: "#ff6b6b",
+  success: "#4ecdc4",
+  warning: "#ffe66d",
+  purple: "#9b59b6",
+  orange: "#f39c12",
+  green: "#27ae60",
+  error: "#e74c3c",
+  background: "#f8f9fa",
+  textPrimary: "#2c3e50",
+  textSecondary: "#666",
+  textLight: "#999",
+  cardBackground: "white",
+  shadow: "#000",
+  borderColor: "#e0e0e0",
+  paleSuccess: "rgba(78, 205, 196, 0.2)",
+  paleWarning: "rgba(255, 230, 109, 0.2)",
+  paleDanger: "rgba(255, 107, 107, 0.2)",
 };
 
-// --- Enhanced Data with Pastel Colors and Better Icons ---
 const defaultProfile: AllergyProfile = {
   personalInfo: { name: "", age: "", medicalId: "" },
   allergens: [],
@@ -99,7 +93,6 @@ const AllergyProfileScreen: FC = () => {
   const [slideAnim] = useState(new Animated.Value(50));
   const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
 
-  // --- Enhanced Data with Pastel Colors and Better Icons ---
   const commonAllergensData: AllergenItem[] = React.useMemo(() => [
     {
       id: "1",
@@ -120,7 +113,7 @@ const AllergyProfileScreen: FC = () => {
     {
       id: "3",
       name: i18n.t('explore.allergenDairy'),
-      icon: "cafe-outline", // Changed to cafe-outline for milk
+      icon: "cafe-outline",
       color: AppColors.primary,
       isSelected: false,
       severity: "mild",
@@ -144,7 +137,7 @@ const AllergyProfileScreen: FC = () => {
     {
       id: "6",
       name: i18n.t('explore.allergenShellfish'),
-      icon: "bug-outline", // Changed to bug for shellfish abstraction
+      icon: "bug-outline",
       color: AppColors.danger,
       isSelected: false,
       severity: "mild",
@@ -152,7 +145,7 @@ const AllergyProfileScreen: FC = () => {
     {
       id: "7",
       name: i18n.t('explore.allergenSoy'),
-      icon: "cube-outline", // Representing a soy cube
+      icon: "cube-outline",
       color: AppColors.purple,
       isSelected: false,
       severity: "mild",
@@ -168,7 +161,7 @@ const AllergyProfileScreen: FC = () => {
     {
       id: "9",
       name: i18n.t('explore.allergenSesame'),
-      icon: "sync-circle-outline", // Representing tiny seeds
+      icon: "sync-circle-outline",
       color: AppColors.warning,
       isSelected: false,
       severity: "mild",
@@ -198,47 +191,40 @@ const AllergyProfileScreen: FC = () => {
     },
   ], [currentLanguage]);
 
-  // Sections with pastel-friendly active colors
   const sectionsData = React.useMemo(() => [
     {
       id: "personal",
       title: i18n.t('explore.sectionPersonal'),
       icon: "person-outline",
       activeColor: AppColors.primary,
-      // emoji: "👤",
     },
     {
       id: "allergens",
       title: i18n.t('explore.sectionAllergens'),
       icon: "warning-outline",
       activeColor: AppColors.danger,
-      // emoji: "⚠️",
     },
     {
       id: "emergency",
       title: i18n.t('explore.sectionEmergency'),
       icon: "call-outline",
       activeColor: AppColors.success,
-      // emoji: "🚨",
     },
     {
       id: "dietary",
       title: i18n.t('explore.sectionDietary'),
       icon: "nutrition-outline",
       activeColor: AppColors.orange,
-      // emoji: "🥗",
     },
     {
       id: "settings",
       title: i18n.t('explore.sectionSettings'),
       icon: "settings-outline",
       activeColor: AppColors.primary,
-      // emoji: "⚙️",
     },
-  ], [currentLanguage]); // Re-run memoization when currentLanguage changes
+  ], [currentLanguage]);
 
 
-  // Animation on section change
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -254,48 +240,39 @@ const AllergyProfileScreen: FC = () => {
     ]).start();
   }, [activeSection, fadeAnim, slideAnim]);
 
-  // Set language to Thai when explore page is accessed
-
-  // Load profile and language from storage
   useEffect(() => {
     const loadProfileAndLanguage = async () => {
       try {
-        // Initialize a fresh profile with current language data
         let newProfile: AllergyProfile = {
-          ...defaultProfile, // Start with basic defaults
-          allergens: commonAllergensData.map(a => ({ ...a })), // Deep copy to avoid mutation
-          dietaryPreferences: dietaryOptionsData.map(d => d.name), // Initialize with all dietary options
+          ...defaultProfile,
+          allergens: commonAllergensData.map(a => ({ ...a })),
+          dietaryPreferences: dietaryOptionsData.map(d => d.name),
         };
 
-        // Load stored profile
         const jsonValue = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
         if (jsonValue != null) {
           const storedProfile: AllergyProfile = JSON.parse(jsonValue);
 
-          // Merge stored personal info and notes
           newProfile.personalInfo = storedProfile.personalInfo;
           newProfile.medicalNotes = storedProfile.medicalNotes;
           newProfile.notificationsEnabled = storedProfile.notificationsEnabled;
           newProfile.autoScanEnabled = storedProfile.autoScanEnabled;
           newProfile.emergencyContacts = storedProfile.emergencyContacts;
 
-          // Merge stored allergen selections and severities
           newProfile.allergens = newProfile.allergens.map(defaultAllergen => {
             const storedAllergen = storedProfile.allergens.find(sa => sa.id === defaultAllergen.id);
             return storedAllergen ? { ...defaultAllergen, isSelected: storedAllergen.isSelected, severity: storedAllergen.severity } : defaultAllergen;
           });
 
-          // Merge stored dietary preferences
           newProfile.dietaryPreferences = storedProfile.dietaryPreferences;
         }
 
         setProfile(newProfile);
 
-        // Load language
         const storedLanguage = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY);
         if (storedLanguage) {
           i18n.locale = storedLanguage;
-          setCurrentLanguage(storedLanguage); // Update state to force re-render
+          setCurrentLanguage(storedLanguage);
         }
       } catch (_e) {
         Alert.alert(i18n.t('common.error'), i18n.t('explore.failedToLoadProfile'));
@@ -307,7 +284,6 @@ const AllergyProfileScreen: FC = () => {
     loadProfileAndLanguage();
   }, [currentLanguage, commonAllergensData, dietaryOptionsData]);
 
-  // --- Enhanced Handlers ---
   const toggleAllergen = (allergenId: string) => {
     Vibration.vibrate(10);
     setProfile((prev) => ({
@@ -379,7 +355,6 @@ const AllergyProfileScreen: FC = () => {
     setActiveSection(sectionId);
   };
 
-  // Save profile
   const handleSave = async () => {
     if (!profile.personalInfo.name.trim()) {
       Alert.alert(i18n.t('common.error'), i18n.t('explore.enterNameError'));
@@ -400,12 +375,11 @@ const AllergyProfileScreen: FC = () => {
   const handleLanguageChange = async (lang: string) => {
     Vibration.vibrate(10);
     i18n.locale = lang;
-    setCurrentLanguage(lang); // Update state to force re-render
+    setCurrentLanguage(lang);
     await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
     Alert.alert(i18n.t('common.success'), i18n.t('explore.languageChangedSuccess', { language: lang === 'en' ? i18n.t('explore.languageEnglish') : i18n.t('explore.languageThai') }));
   };
 
-  // --- Enhanced UI Components ---
   const getSeverityData = (severity: string) => {
     switch (severity) {
       case "mild":
@@ -455,15 +429,14 @@ const AllergyProfileScreen: FC = () => {
             ? section.activeColor
             : AppColors.cardBackground,
           borderColor: isActive ? section.activeColor : AppColors.borderColor,
-          borderWidth: 2, // Added border for subtle depth
+          borderWidth: 2,
         },
-        isActive && styles.activeSectionCardShadow, // Apply active shadow
+        isActive && styles.activeSectionCardShadow,
       ]}
       onPress={onPress}
       activeOpacity={0.8}
     >
       <View style={styles.sectionCardContent}>
-        {/* <Text style={styles.sectionEmoji}>{section.emoji}</Text> */}
         <Ionicons
           name={section.icon}
           size={24}
@@ -490,7 +463,7 @@ const AllergyProfileScreen: FC = () => {
             styles.allergenMain,
             {
               backgroundColor: allergen.isSelected
-                ? `${allergen.color}30` // Slightly darker active background
+                ? `${allergen.color}30`
                 : AppColors.cardBackground,
               borderColor: allergen.isSelected
                 ? allergen.color
@@ -1129,10 +1102,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     paddingTop: 50,
-    borderBottomLeftRadius: 20, // Rounded corners for a softer look
+    borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginBottom: 10,
-    shadowColor: AppColors.shadow, // Subtle shadow for header
+    shadowColor: AppColors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -1251,7 +1224,7 @@ const styles = StyleSheet.create({
     borderColor: AppColors.borderColor,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    shadowColor: AppColors.shadow, // Soft shadow for inputs
+    shadowColor: AppColors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -1283,7 +1256,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 15,
     borderWidth: 2,
-    borderRadius: 12, // Ensure inner border radius matches card
+    borderRadius: 12,
   },
   allergenLeft: {
     flexDirection: "row",
@@ -1346,7 +1319,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     gap: 5,
-    borderWidth: 1, // Added border for clarity
+    borderWidth: 1,
     borderColor: AppColors.borderColor,
   },
   severityButtonText: {
@@ -1428,7 +1401,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 2,
-    minWidth: (width - 60) / 2 - 5, // Adjusted for gap
+    minWidth: (width - 60) / 2 - 5,
     position: "relative",
     shadowColor: AppColors.shadow,
     shadowOffset: { width: 0, height: 1 },

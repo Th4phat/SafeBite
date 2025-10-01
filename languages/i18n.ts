@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getLocales } from 'expo-localization';
 import { I18n } from 'i18n-js';
 import en from '../languages/en.json';
@@ -9,7 +9,7 @@ const i18n = new I18n();
 i18n.enableFallback = true;
 i18n.store({ en, th });
 
-export const LANGUAGE_STORAGE_KEY = "userLanguage"; // Define the key
+export const LANGUAGE_STORAGE_KEY = "userLanguage";
 
 export const initI18n = async () => {
   try {
@@ -21,7 +21,7 @@ export const initI18n = async () => {
     }
   } catch (error) {
     console.error("Failed to load language from storage", error);
-    i18n.locale = getLocales()[0].languageCode ?? 'en'; // Fallback in case of error
+    i18n.locale = getLocales()[0].languageCode ?? 'en';
   }
 };
 

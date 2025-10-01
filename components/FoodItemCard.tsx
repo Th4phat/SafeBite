@@ -1,3 +1,4 @@
+import { FoodItem } from "@/constants/Struct";
 import i18n from "@/languages/i18n";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,7 +9,6 @@ import {
   Text,
   View
 } from "react-native";
-import { FoodItem } from "../api/mockApi";
 
 // Props for the FoodItemCard component
 interface FoodItemCardProps {
