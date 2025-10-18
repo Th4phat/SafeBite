@@ -14,7 +14,7 @@
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v16+)
+- Node.js (v16+) or Bun
 - Expo CLI
 - Google Gemini API key
 
@@ -22,9 +22,9 @@
 
 1. **Clone & Install**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Th4phat/SafeBite.git
    cd safebite
-   npm install
+   npm install # or bun install
    ```
 
 2. **Set up environment**
