@@ -7,13 +7,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { FC, useEffect, useRef } from "react";
 import {
   Animated,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FoodItemCard } from "../components/FoodItemCard";
 
 // Props for the main AnalysisResultScreen component

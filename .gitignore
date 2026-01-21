@@ -3,6 +3,13 @@
 # dependencies
 node_modules/
 
+# build folders
+android/build/
+ios/build/
+
+# local env files
+.env
+
 # Expo
 .expo/
 dist/
@@ -30,8 +37,6 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
 
 # typescript
 *.tsbuildinfo

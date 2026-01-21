@@ -76,6 +76,8 @@ const FoodItemCard: FC<FoodItemCardProps> = ({ item, index }) => {
         {
           opacity: fadeAnimation,
           transform: [{ translateY: slideAnimation }],
+          borderColor: item.isDangerous ? "#FF0000" : "transparent",
+          borderWidth: item.isDangerous ? 2 : 0,
         },
       ]}
     >
@@ -84,7 +86,15 @@ const FoodItemCard: FC<FoodItemCardProps> = ({ item, index }) => {
         style={styles.cardGradient}
       >
         <View style={styles.cardHeader}>
-          <Text style={styles.foodName}>{item.name}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.foodName}>{item.name}</Text>
+            {item.isDangerous && (
+              <View style={styles.dangerBadge}>
+                <Ionicons name="alert-circle" size={14} color="white" />
+                <Text style={styles.dangerBadgeText}>WARNING: ALLERGEN DETECTED</Text>
+              </View>
+            )}
+          </View>
           <View style={styles.foodIcon}>
             <Text style={styles.foodEmoji}>🍽️</Text>
           </View>
@@ -230,6 +240,22 @@ const styles = StyleSheet.create({
     color: "#4ECDC4",
     fontSize: 14,
     fontWeight: "500",
+  },
+  dangerBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FF0000",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    marginTop: 4,
+    alignSelf: "flex-start",
+  },
+  dangerBadgeText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "900",
+    marginLeft: 4,
   },
 });
 

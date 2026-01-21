@@ -67,7 +67,11 @@
     "dietaryKeto": "คีโต",
     "dietaryLowCarb": "คาร์โบไฮเดรตต่ำ",
     "dietaryLowSodium": "โซเดียมต่ำ",
-    "dietarySugarFree": "ปราศจากน้ำตาล"
+    "dietarySugarFree": "ปราศจากน้ำตาล",
+    "addCustomAllergen": "เพิ่มสารก่อภูมิแพ้ส่วนตัว",
+    "customAllergenPlaceholder": "ใส่ชื่อสารก่อภูมิแพ้ (เช่น อบเชย)",
+    "removeCustomAllergen": "ลบ",
+    "customAllergensTitle": "สารก่อภูมิแพ้เพิ่มเติม"
   },
   "home": {
     "appTitle": "SafeBite",
@@ -118,7 +122,10 @@
   "camera": {
     "cameraPosition": "วางเมนูของคุณไว้ภายในพื้นที่สแกน",
     "analyzingMenu": "กำลังวิเคราะห์เมนู",
-    "detectingIngredients": "กำลังตรวจหาส่วนผสมและสารก่อภูมิแพ้..."
+    "detectingIngredients": "กำลังตรวจหาส่วนผสมและสารก่อภูมิแพ้...",
+    "permissionTitle": "จำเป็นต้องเข้าถึงกล้อง",
+    "permissionText": "เราต้องการสิทธิ์เข้าถึงกล้องเพื่อสแกนและวิเคราะห์เมนูอาหารสำหรับข้อมูลสารก่อภูมิแพ้",
+    "permissionButton": "อนุญาตเข้าถึงกล้อง"
   },
   "history": {
     "photoHistoryTitle": "ประวัติรูปภาพ",

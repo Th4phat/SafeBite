@@ -53,7 +53,9 @@
       ],
       [
         "expo-localization"
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "locales": {
       "th": "./languages/thai.json",

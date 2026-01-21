@@ -3,16 +3,19 @@ import AnalysisResultScreen from "@/components/Analysis";
 import { AnalysisResponse, FoodItem } from "@/constants/Struct";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Type } from "@google/genai"; // Import Schema for schema definition
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Animated,
   Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
+  Vibration,
   View
 } from "react-native";
 import { PhotoAnalysisResult, saveAnalysisResult } from '../../api/historyStorage';
@@ -119,10 +122,9 @@ const MenuScannerScreen: FC = () => {
       >
         <View style={styles.permissionCard}>
           <Ionicons name="camera-outline" size={80} color="#667eea" />
-          <Text style={styles.permissionTitle}>Camera Access Required</Text>
+          <Text style={styles.permissionTitle}>{i18n.t("camera.permissionTitle")}</Text>
           <Text style={styles.permissionText}>
-            We need camera access to scan and analyze your food menus for
-            allergen information.
+            {i18n.t("camera.permissionText")}
           </Text>
           <TouchableOpacity
             style={styles.permissionButton}
@@ -132,7 +134,7 @@ const MenuScannerScreen: FC = () => {
               colors={["#667eea", "#764ba2"]}
               style={styles.permissionButtonGradient}
             >
-              <Text style={styles.permissionButtonText}>Grant Permission</Text>
+              <Text style={styles.permissionButtonText}>{i18n.t("camera.permissionButton")}</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -155,58 +157,121 @@ const MenuScannerScreen: FC = () => {
           response.arrayBuffer()
         ).then((buffer) => Buffer.from(buffer).toString("base64"));
 
-        const prompt = `Analyze the food items in the image for potential allergens and ingredients. For each distinct food item identified, provide its name, a list of potential allergens (e.g., "Dairy", "Gluten", "Nuts"), and a list of its main ingredients. If the food item name is in a language other than English, also provide its English translation in parentheses, for example, 'ข้าวไข่เจียว (omelet with rice)'. For allergens and ingredients, please provide their canonical English names, followed by their Thai translation in parentheses, for example, "Egg (ไข่)" and "Shrimp (กุ้ง)". Return the information as a JSON array of objects, where each object corresponds to a food item and has 'name', 'allergens', and 'ingredients' properties. If no food items are clearly identifiable or no allergens/ingredients are found for a food item, return empty arrays or suitable default values.`;
+        const prompt = `
+        Act as an expert nutritionist and food safety analyst. Analyze the provided image to identify all distinct food items.
 
-        const result = await ai.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: [
-            { text: prompt },
-            {
-              inlineData: {
-                data: base64Photo,
-                mimeType: "image/jpeg",
-              },
-            },
-          ],
-          config: {
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  name: {
-                    type: Type.STRING,
-                  },
-                  allergens: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.STRING,
-                    },
-                  },
-                  ingredients: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.STRING,
-                    },
+For each item, present the data in a structured Markdown table with the following columns:
+
+1.  **Food Item:** Name in English followed by the native name in parentheses, e.g., "Omelet (ไข่เจียว)".
+2.  **Potential Allergens:** List common allergens visible or typically associated with this dish. Format as: "English Name (Thai Name)".
+3.  **Main Ingredients:** List the primary visible and standard ingredients. Format as: "English Name (Thai Name)".
+
+**Important Guidelines:**
+* If you are unsure about a specific ingredient, note it as "Unverified".
+* Include common hidden allergens typical for Thai cuisine (e.g., fish sauce, shrimp paste) if the dish usually contains them.
+* Ensure all Thai translations are accurate and colloquial.
+        `;
+
+        const models = ["gemini-3-flash-preview", 'gemini-2.5-flash', 'gemini-2.5-flash-lite-preview-09-2025'];
+        let result = null;
+        let lastError = null;
+
+        for (const modelId of models) {
+          try {
+            console.log(`Attempting analysis with model: ${modelId}`);
+            const response = await ai.generateContent({
+              model: modelId,
+              contents: [
+                { text: prompt },
+                {
+                  inlineData: {
+                    data: base64Photo,
+                    mimeType: "image/jpeg",
                   },
                 },
-                propertyOrdering: ["name", "allergens", "ingredients"],
+              ],
+              config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                  type: Type.ARRAY,
+                  items: {
+                    type: Type.OBJECT,
+                    properties: {
+                      name: {
+                        type: Type.STRING,
+                      },
+                      allergens: {
+                        type: Type.ARRAY,
+                        items: {
+                          type: Type.STRING,
+                        },
+                      },
+                      ingredients: {
+                        type: Type.ARRAY,
+                        items: {
+                          type: Type.STRING,
+                        },
+                      },
+                    },
+                    propertyOrdering: ["name", "allergens", "ingredients"],
+                  },
+                },
               },
-            },
-          },
-        });
+            });
+            result = response;
+            break; // Exit loop on success
+          } catch (error) {
+            console.error(`Analysis failed with model ${modelId}:`, error);
+            lastError = error;
+          }
+        }
+
+        if (!result) {
+          throw lastError || new Error("All models failed to analyze the image.");
+        }
 
         const parsedResult: FoodItem[] = JSON.parse(result.text || "[]");
 
+        // Load user profile for allergen matching
+        const PROFILE_STORAGE_KEY = "userAllergyProfile";
+        const jsonValue = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
+        let userAllergens: string[] = [];
+        if (jsonValue) {
+          const profile = JSON.parse(jsonValue);
+          userAllergens = profile.allergens
+            .filter((a: any) => a.isSelected)
+            .map((a: any) => a.name.toLowerCase());
+        }
+
+        let matchFound = false;
         const transformedResult: AnalysisResponse = {
-          foods: parsedResult.map((item, index) => ({
-            id: `${Date.now()}-${index}`,
-            name: item.name,
-            allergens: item.allergens,
-            ingredients: item.ingredients,
-          })),
+          foods: parsedResult.map((item, index) => {
+            const isDangerous = item.allergens.some(a =>
+              userAllergens.some(userA => a.toLowerCase().includes(userA))
+            ) || item.ingredients.some(ing =>
+              userAllergens.some(userA => ing.toLowerCase().includes(userA))
+            );
+
+            if (isDangerous) matchFound = true;
+
+            return {
+              id: `${Date.now()}-${index}`,
+              name: item.name,
+              allergens: item.allergens,
+              ingredients: item.ingredients,
+              isDangerous: isDangerous,
+            };
+          }),
         };
+
+        if (matchFound) {
+          Vibration.vibrate([0, 500, 200, 500]); // Pattern for warning
+          Alert.alert(
+            i18n.t("analysis.warningTitle") || "Allergen Warning!",
+            i18n.t("analysis.warningMessage") || "We detected ingredients that may match your allergy profile. Please be careful!",
+            [{ text: "OK" }]
+          );
+        }
 
         setAnalysisResult(transformedResult);
 

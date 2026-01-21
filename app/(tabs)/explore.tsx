@@ -9,7 +9,6 @@ import {
   Alert,
   Animated,
   Dimensions,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Switch,
@@ -19,6 +18,7 @@ import {
   Vibration,
   View,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get("window");
 
@@ -92,6 +92,7 @@ const AllergyProfileScreen: FC = () => {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
   const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
+  const [customAllergenInput, setCustomAllergenInput] = useState("");
 
   const commonAllergensData: AllergenItem[] = React.useMemo(() => [
     {
@@ -179,7 +180,7 @@ const AllergyProfileScreen: FC = () => {
   const dietaryOptionsData = React.useMemo(() => [
     { name: i18n.t('explore.dietaryVegetarian'), icon: "accessibility-outline", color: AppColors.green },
     { name: i18n.t('explore.dietaryVegan'), icon: "leaf-sharp", color: AppColors.green },
-    { name: i18n.t('explore.dietaryKosher'), icon: "star-outline", color: AppColors.primary },
+    { name: i18n.t('StarOutline'), icon: "star-outline", color: AppColors.primary },
     { name: i18n.t('explore.dietaryHalal'), icon: "moon-outline", color: AppColors.purple },
     { name: i18n.t('explore.dietaryKeto'), icon: "flash-outline", color: AppColors.danger },
     { name: i18n.t('explore.dietaryLowCarb'), icon: "trending-down-outline", color: AppColors.orange },
@@ -246,7 +247,7 @@ const AllergyProfileScreen: FC = () => {
         let newProfile: AllergyProfile = {
           ...defaultProfile,
           allergens: commonAllergensData.map(a => ({ ...a })),
-          dietaryPreferences: dietaryOptionsData.map(d => d.name),
+          dietaryPreferences: [],
         };
 
         const jsonValue = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
@@ -259,12 +260,18 @@ const AllergyProfileScreen: FC = () => {
           newProfile.autoScanEnabled = storedProfile.autoScanEnabled;
           newProfile.emergencyContacts = storedProfile.emergencyContacts;
 
-          newProfile.allergens = newProfile.allergens.map(defaultAllergen => {
+          // Merge predefined allergens with stored state
+          const predefinedIds = commonAllergensData.map(a => a.id);
+          const updatedPredefined = newProfile.allergens.map(defaultAllergen => {
             const storedAllergen = storedProfile.allergens.find(sa => sa.id === defaultAllergen.id);
             return storedAllergen ? { ...defaultAllergen, isSelected: storedAllergen.isSelected, severity: storedAllergen.severity } : defaultAllergen;
           });
 
-          newProfile.dietaryPreferences = storedProfile.dietaryPreferences;
+          // Add custom allergens (those not in predefined list)
+          const customAllergens = (storedProfile.allergens || []).filter(a => !predefinedIds.includes(a.id));
+
+          newProfile.allergens = [...updatedPredefined, ...customAllergens];
+          newProfile.dietaryPreferences = storedProfile.dietaryPreferences || [];
         }
 
         setProfile(newProfile);
@@ -282,7 +289,7 @@ const AllergyProfileScreen: FC = () => {
     };
 
     loadProfileAndLanguage();
-  }, [currentLanguage, commonAllergensData, dietaryOptionsData]);
+  }, [currentLanguage, commonAllergensData]);
 
   const toggleAllergen = (allergenId: string) => {
     Vibration.vibrate(10);
@@ -317,6 +324,34 @@ const AllergyProfileScreen: FC = () => {
         ? prev.dietaryPreferences.filter((p) => p !== preference)
         : [...prev.dietaryPreferences, preference],
     }));
+  };
+
+  const addCustomAllergen = () => {
+    if (!customAllergenInput.trim()) return;
+
+    const newAllergen: AllergenItem = {
+      id: `custom-${Date.now()}`,
+      name: customAllergenInput.trim(),
+      icon: "alert-circle-outline",
+      color: AppColors.danger,
+      isSelected: true,
+      severity: "moderate",
+    };
+
+    setProfile(prev => ({
+      ...prev,
+      allergens: [...prev.allergens, newAllergen]
+    }));
+    setCustomAllergenInput("");
+    Vibration.vibrate(10);
+  };
+
+  const removeCustomAllergen = (id: string) => {
+    setProfile(prev => ({
+      ...prev,
+      allergens: prev.allergens.filter(a => a.id !== id)
+    }));
+    Vibration.vibrate(10);
   };
 
   const updateEmergencyContact = (
@@ -502,6 +537,16 @@ const AllergyProfileScreen: FC = () => {
                 />
               </View>
             )}
+
+            {allergen.id.startsWith("custom-") && (
+              <TouchableOpacity
+                onPress={() => removeCustomAllergen(allergen.id)}
+                style={styles.removeCustomBtn}
+              >
+                <Ionicons name="trash-outline" size={18} color={AppColors.danger} />
+              </TouchableOpacity>
+            )}
+
             <View
               style={[
                 styles.checkbox,
@@ -750,7 +795,6 @@ const AllergyProfileScreen: FC = () => {
                       }
                       placeholder={i18n.t('explore.agePlaceholder')}
                       placeholderTextColor="#999"
-                      keyboardType="numeric"
                     />
                   </View>
                 </View>
@@ -796,6 +840,28 @@ const AllergyProfileScreen: FC = () => {
                 {profile.allergens.map((allergen) => (
                   <AllergenCard key={allergen.id} allergen={allergen} />
                 ))}
+
+                {/* Custom Allergen Input */}
+                <View style={styles.customAllergenContainer}>
+                  <Text style={styles.customAllergenTitle}>
+                    {i18n.t("explore.customAllergensTitle")}
+                  </Text>
+                  <View style={styles.customInputRow}>
+                    <TextInput
+                      style={styles.customInput}
+                      value={customAllergenInput}
+                      onChangeText={setCustomAllergenInput}
+                      placeholder={i18n.t("explore.customAllergenPlaceholder")}
+                      placeholderTextColor="#999"
+                    />
+                    <TouchableOpacity
+                      style={styles.addCustomBtn}
+                      onPress={addCustomAllergen}
+                    >
+                      <Ionicons name="add" size={24} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
             </View>
           )}
@@ -1420,17 +1486,16 @@ const styles = StyleSheet.create({
   dietaryText: {
     fontSize: 14,
     fontWeight: "600",
-    flex: 1,
   },
   dietaryCheck: {
+    position: "absolute",
+    top: -5,
+    right: -5,
     width: 20,
     height: 20,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute",
-    top: -5,
-    right: -5,
   },
   textAreaContainer: {
     backgroundColor: AppColors.cardBackground,
@@ -1438,11 +1503,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: AppColors.borderColor,
     padding: 15,
-    shadowColor: AppColors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
   },
   textArea: {
     fontSize: 16,
@@ -1459,11 +1519,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderColor: AppColors.borderColor,
-    shadowColor: AppColors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
   },
   settingLeft: {
     flexDirection: "row",
@@ -1517,6 +1572,44 @@ const styles = StyleSheet.create({
   },
   selectedLanguageOptionText: {
     color: AppColors.cardBackground,
+  },
+  customAllergenContainer: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: AppColors.borderColor,
+  },
+  customAllergenTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: AppColors.textPrimary,
+    marginBottom: 12,
+  },
+  customInputRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  customInput: {
+    flex: 1,
+    backgroundColor: "white",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: AppColors.borderColor,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    fontSize: 14,
+  },
+  addCustomBtn: {
+    backgroundColor: AppColors.primary,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  removeCustomBtn: {
+    marginRight: 10,
+    padding: 5,
   },
 });
 

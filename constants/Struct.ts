@@ -3,6 +3,7 @@ export interface FoodItem {
   name: string;
   ingredients: string[];
   allergens: string[];
+  isDangerous?: boolean;
 }
 
 export interface AnalysisResponse {

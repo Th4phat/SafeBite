@@ -1,9 +1,9 @@
 <resources>
   <string name="welcome">"Welcome!"</string>
-  <string name="common">Common</string>
-  <string name="explore">Explore</string>
-  <string name="home">Home</string>
-  <string name="analysis">Analysis</string>
-  <string name="camera">Camera</string>
-  <string name="history">History</string>
+  <string name="common">"[object Object]"</string>
+  <string name="explore">"[object Object]"</string>
+  <string name="home">"[object Object]"</string>
+  <string name="analysis">"[object Object]"</string>
+  <string name="camera">"[object Object]"</string>
+  <string name="history">"[object Object]"</string>
 </resources>

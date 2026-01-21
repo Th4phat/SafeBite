@@ -2,16 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HISTORY_KEY = 'history';
 
-export interface FoodItem {
-  id: string;
-  name: string;
-  ingredients: string[];
-  allergens: string[];
-}
-
-export interface AnalysisResponse {
-  foods: FoodItem[];
-}
+import { AnalysisResponse } from '@/constants/Struct';
 export interface PhotoAnalysisResult {
   id: string;
   timestamp: number;

@@ -67,7 +67,11 @@
     "dietaryKeto": "Keto",
     "dietaryLowCarb": "Low Carb",
     "dietaryLowSodium": "Low Sodium",
-    "dietarySugarFree": "Sugar-Free"
+    "dietarySugarFree": "Sugar-Free",
+    "addCustomAllergen": "Add Custom Allergen",
+    "customAllergenPlaceholder": "Enter allergen name (e.g. Cinnamon)",
+    "removeCustomAllergen": "Remove",
+    "customAllergensTitle": "Custom Allergens"
   },
   "home": {
     "appTitle": "SafeBite",
@@ -118,7 +122,10 @@
   "camera": {
     "cameraPosition": "Place your menu inside scanning area",
     "analyzingMenu": "Analyzing Menu",
-    "detectingIngredients": "Detecting ingredients and allergens..."
+    "detectingIngredients": "Detecting ingredients and allergens...",
+    "permissionTitle": "Camera Access Required",
+    "permissionText": "We need camera access to scan and analyze your food menus for allergen information.",
+    "permissionButton": "Grant Permission"
   },
   "history": {
     "photoHistoryTitle": "Photo History",

@@ -30,7 +30,7 @@
 2. **Set up environment**
    Create `.env` file:
    ```
-   GEMINI_API_KEY=your_api_key_here
+   EXPO_PUBLIC_GEMINI_API_KEY=your_api_key_here
    ```
 
 3. **Start development**
@@ -65,7 +65,7 @@
 
 ### Environment Variables
 ```env
-GEMINI_API_KEY=your_gemini_api_key_here
+EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 ### App Details
